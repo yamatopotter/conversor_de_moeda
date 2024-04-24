@@ -44,5 +44,21 @@ public class CurrencyList {
     public Map<String, Currency> getCurrencyList() {
         return currencyList;
     }
+
+    public void mostrarMoedas(){
+        int count = 1;
+        System.out.println("*******************************************************");
+        System.out.println("*********          Moedas disponíveis         *********");
+        for(Map.Entry<String, Currency> moeda : currencyList.entrySet()){
+            if(count<3){
+                System.out.print(String.format("[%-3s] [%-25.25s]  |  ", moeda.getValue().getCode(), moeda.getValue().getName()));
+            }
+            else{
+                System.out.println(String.format("[%-3s] [%-25.25s]  |", moeda.getValue().getCode(), moeda.getValue().getName()));
+                count = 0;
+            }
+            count++;
+        }
+    }
 }
 
