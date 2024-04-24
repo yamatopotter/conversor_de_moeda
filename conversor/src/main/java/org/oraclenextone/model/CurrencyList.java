@@ -30,11 +30,15 @@ public class CurrencyList {
             List<String[]> supportedCode = currencyData.getSupportedCodes();
 
             for (String[] code : supportedCode) {
-                this.currencyList.put(code[0], new Currency(code[0], code[1]));
+                this.currencyList.put(code[0], new Currency(code[1], code[0]));
             }
         } catch (Exception e) {
             System.out.println("Houve um erro: " + e.getMessage());
         }
+    }
+
+    public Currency getCurrency(String code){
+        return this.currencyList.get(code);
     }
 
     public Map<String, Currency> getCurrencyList() {

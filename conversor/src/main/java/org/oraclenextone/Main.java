@@ -20,64 +20,100 @@ public class Main {
 
     public static void main(String[] args) {
         Scanner leitura = new Scanner(System.in);
-        Integer opcao = 0;
+        int opcao = 0;
+        double valor = 0.0;
         Boolean loopMenu = true;
 
-//        while(loopMenu){
-//            showMenu();
-//            System.out.println("Digite sua opção");
-//            opcao = leitura.nextInt();
-//            switch(opcao){
-//                case 1:
-//                    converterMoeda()
-//                    break;
-//                case 2:
-//                    break;
-//                case 3:
-//                    break;
-//                case 4:
-//                    break;
-//                case 5:
-//                    break;
-//                case 6:
-//                    break;
-//                case 7:
-//                    break;
-//                case 8:
-//                    break;
-//                case 9:
-//                    break;
-//                default:
-//                    break;
-//            }
-//        }
+        while (loopMenu) {
+            showMenu();
+            System.out.println("Digite sua opção");
+            opcao = leitura.nextInt();
+            switch (opcao) {
+                case 1:
+                    System.out.println("Digite o valor a ser convertido");
+                    valor = leitura.nextDouble();
+                    converterMoeda(currencyList.getCurrency("USD"), currencyList.getCurrency("ARS"), valor);
+                    break;
+                case 2:
+                    System.out.println("Digite o valor a ser convertido");
+                    valor = leitura.nextDouble();
+                    converterMoeda(currencyList.getCurrency("ARS"), currencyList.getCurrency("USD"), valor);
+                    break;
+                case 3:
+                    System.out.println("Digite o valor a ser convertido");
+                    valor = leitura.nextDouble();
+                    converterMoeda(currencyList.getCurrency("USD"), currencyList.getCurrency("BRL"), valor);
+                    break;
+                case 4:
+                    System.out.println("Digite o valor a ser convertido");
+                    valor = leitura.nextDouble();
+                    converterMoeda(currencyList.getCurrency("BRL"), currencyList.getCurrency("USD"), valor);
+                    break;
+                case 5:
+                    System.out.println("Digite o valor a ser convertido");
+                    valor = leitura.nextDouble();
+                    converterMoeda(currencyList.getCurrency("USD"), currencyList.getCurrency("COP"), valor);
+                    break;
+                case 6:
+                    System.out.println("Digite o valor a ser convertido");
+                    valor = leitura.nextDouble();
+                    converterMoeda(currencyList.getCurrency("COP"), currencyList.getCurrency("USD"), valor);
+                    break;
+                case 7:
+                    System.out.println("Digite a moeda que deseja converter:");
+                    String moeda1 = leitura.next().toUpperCase();
+                    System.out.println("Digite o valor que deseja converter:");
+                    valor = leitura.nextDouble();
+                    System.out.println("Digite a moeda para qual deseja converter:");
+                    String moeda2 = leitura.next().toUpperCase();
+
+                    converterMoeda(currencyList.getCurrency(moeda1), currencyList.getCurrency(moeda2), valor);
+                    break;
+                case 8:
+                    break;
+                case 9:
+                    break;
+                default:
+                    break;
+            }
+        }
     }
 
-    private static Double converterMoeda(Currency currency1, Currency currency2){
+    private static void converterMoeda(Currency currency1, Currency currency2, Double valor) {
         Gson gson = new GsonBuilder()
-                .setFieldNamingPolicy(FieldNamingPolicy.UPPER_CAMEL_CASE)
+                .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
                 .setPrettyPrinting()
                 .create();
 
-        HttpClient httpClient = HttpClient.newHttpClient();
-        String url = "https://v6.exchangerate-api.com/v6/"
-                +apiKey
-                +"/pair/"
-                +currency1.getCode()+"/"
-                +currency2.getCode();
+        try {
+            HttpClient httpClient = HttpClient.newHttpClient();
+            String url = "https://v6.exchangerate-api.com/v6/"
+                    + apiKey
+                    + "/pair/"
+                    + currency1.getCode() + "/"
+                    + currency2.getCode() + "/"
+                    + valor;
 
-        HttpRequest httpRequest = HttpRequest.newBuilder().uri(URI.create(url)).build();
+            HttpRequest httpRequest = HttpRequest.newBuilder().uri(URI.create(url)).build();
 
-        try{
             HttpResponse<String> httpResponse = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
             String json = httpResponse.body();
             ExchangeApiResponse exchangeResponse = gson.fromJson(json, ExchangeApiResponse.class);
-        }
-        catch(Exception e){
-            System.out.println("Houve um erro: "+e.getMessage());
-        }
 
-        return 0.0;
+            System.out.println("*******************************************************");
+            System.out.println("*********          Conversão da Moeda         *********");
+            System.out.println("Moeda de base: " + exchangeResponse.base_code());
+            System.out.println("Moeda convertida: " + exchangeResponse.target_code());
+            System.out.println("Valor a converter: " + valor + " " + exchangeResponse.base_code());
+            System.out.println("Valor convertido: " + exchangeResponse.conversion_result() + " " + exchangeResponse.target_code());
+            System.out.println("Taxa de conversão: " + exchangeResponse.conversion_rate() + " " + exchangeResponse.target_code());
+        }
+        catch(NullPointerException e){
+            System.out.println("[ERRO]: Uma ou as duas moedas fornecidas são inválidas, tente novamente.");
+        }
+        catch (Exception e) {
+            System.out.println("Houve um erro: " + e.getMessage());
+        }
     }
 
     private static void showMenu() {
@@ -90,13 +126,9 @@ public class Main {
         System.out.println("4) Real Brasileiro (BRL) >> Dólar (USD)");
         System.out.println("5) Dólar (USD) >> Peso Colombiano (COP)");
         System.out.println("6) Peso Colombiano (COP) >> Dólar (USD)");
-        System.out.println("7) Converter para todas as moedas");
+        System.out.println("7) Converter para outra moeda");
         System.out.println("8) Ver histórico da moeda");
         System.out.println("9) Sair");
         System.out.println("*******************************************************");
-    }
-
-    private static void getCurrencyData(){
-
     }
 }

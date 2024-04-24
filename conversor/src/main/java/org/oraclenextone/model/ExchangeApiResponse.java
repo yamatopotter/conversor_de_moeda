@@ -1,6 +1,5 @@
 package org.oraclenextone.model;
 
-public record ExchangeApiResponse(String locale, String twoLetterCode, String currencyName, String currencyNameShort,
-                                  String displaySymbol, String flagUrl) {
+public record ExchangeApiResponse(String base_code, String target_code, Double conversion_rate, Double conversion_result) {
 
 }
