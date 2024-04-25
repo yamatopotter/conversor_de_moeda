@@ -1,0 +1,5 @@
+2024-04-25T00:10:13.722123302 | Moeda base: USD | Valor base: 300,00 | Moeda conversão: ARS | Valor conversão: 259425,00 
+2024-04-25T00:12:57.887832901 | Moeda base: USD | Valor base: 120,00 | Moeda conversão: ARS | Valor conversão: 103770,00 
+2024-04-25T00:13:12.417981646 | Erro Cannot invoke "org.oraclenextone.model.Currency.getCode()" because "currency1" is null 
+2024-04-25T00:13:17.340937914 | Moeda base: BRL | Valor base: 120,00 | Moeda conversão: USD | Valor conversão: 23,34 
+2024-04-25T00:13:44.018680961 | Moeda base: BRL | Valor base: 150,00 | Moeda conversão: USD | Valor conversão: 29,18 

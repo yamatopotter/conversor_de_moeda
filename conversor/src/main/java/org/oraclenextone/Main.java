@@ -3,21 +3,20 @@ package org.oraclenextone;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import org.oraclenextone.model.Currency;
-
-import org.oraclenextone.model.CurrencyList;
-import org.oraclenextone.model.ExchangeApiResponse;
+import org.oraclenextone.model.*;
 
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.util.List;
+import java.time.LocalDateTime;
+import java.util.Map;
 import java.util.Scanner;
 
 public class Main {
     static String apiKey = "10a5d1f31240f78d93470fd2";
     static CurrencyList currencyList = new CurrencyList(apiKey);
+    static Log logfile = new Log("log.txt");
 
     public static void main(String[] args) {
         Scanner leitura = new Scanner(System.in);
@@ -78,23 +77,27 @@ public class Main {
                     converterMoeda(currencyList.getCurrency(moeda1), currencyList.getCurrency(moeda2), valor);
                     break;
                 case 8:
-                    System.out.println("Deseja visualizar as moedas disponiveis? S/N");
-                    verMoedas = leitura.next().toUpperCase();
-                    if(verMoedas.equals("S")){
-                        currencyList.mostrarMoedas();
-                    }
-                    System.out.println("Digite a moeda que deseja ver o histórico:");
-                    moeda1 = leitura.next().toUpperCase();
-                    System.out.println("Digite o dia que você deseja consultar");
-                    int dia = leitura.nextInt();
-                    System.out.println("Digite o mês que você deseja consultar (em número)");
-                    int mes = leitura.nextInt();
-                    System.out.println("Digite o dia que você deseja consultar (4 digitos)");
-                    int ano = leitura.nextInt();
-
-                    showCurrencyHistory(moeda1, dia, mes, ano);
+                    System.out.println("Função disponivel apenas na versão PRO da API");
                     break;
+
+//                    System.out.println("Deseja visualizar as moedas disponiveis? S/N");
+//                    verMoedas = leitura.next().toUpperCase();
+//                    if(verMoedas.equals("S")){
+//                        currencyList.mostrarMoedas();
+//                    }
+//                    System.out.println("Digite a moeda que deseja ver o histórico:");
+//                    moeda1 = leitura.next().toUpperCase();
+//                    System.out.println("Digite o dia que você deseja consultar");
+//                    int dia = leitura.nextInt();
+//                    System.out.println("Digite o mês que você deseja consultar (em número)");
+//                    int mes = leitura.nextInt();
+//                    System.out.println("Digite o dia que você deseja consultar (4 digitos)");
+//                    int ano = leitura.nextInt();
+//
+//                    showCurrencyHistory(moeda1, dia, mes, ano);
                 case 9:
+                    loopMenu = false;
+                    logfile.closeFile();
                     break;
                 default:
                     break;
@@ -130,12 +133,11 @@ public class Main {
             System.out.println("Valor a converter: " + valor + " " + exchangeResponse.base_code());
             System.out.println("Valor convertido: " + exchangeResponse.conversion_result() + " " + exchangeResponse.target_code());
             System.out.println("Taxa de conversão: " + exchangeResponse.conversion_rate() + " " + exchangeResponse.target_code());
-        }
-        catch(NullPointerException e){
-            System.out.println("[ERRO]: Uma ou as duas moedas fornecidas são inválidas, tente novamente.");
+            logfile.addLog(LocalDateTime.now(), exchangeResponse.base_code(), exchangeResponse.target_code(), valor, exchangeResponse.conversion_result());
         }
         catch (Exception e) {
             System.out.println("Houve um erro: " + e.getMessage());
+            logfile.addLog(LocalDateTime.now(), e.getMessage());
         }
     }
 
@@ -149,24 +151,38 @@ public class Main {
             HttpClient httpClient = HttpClient.newHttpClient();
             String url = "https://v6.exchangerate-api.com/v6/"
                     + apiKey
-                    + "/pair/"
-                    + currency1.getCode() + "/"
-                    + currency2.getCode() + "/"
-                    + valor;
+                    + "/history/"
+                    + moeda + "/"
+                    + ano + "/"
+                    + mes + "/"
+                    + dia;
+
+            System.out.println(url);
 
             HttpRequest httpRequest = HttpRequest.newBuilder().uri(URI.create(url)).build();
 
             HttpResponse<String> httpResponse = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
             String json = httpResponse.body();
-            ExchangeApiResponse exchangeResponse = gson.fromJson(json, ExchangeApiResponse.class);
+            HistoryExchangeApiResponse historyResponse = gson.fromJson(json, HistoryExchangeApiResponse.class);
 
             System.out.println("*******************************************************");
-            System.out.println("*********          Conversão da Moeda         *********");
-            System.out.println("Moeda de base: " + exchangeResponse.base_code());
-            System.out.println("Moeda convertida: " + exchangeResponse.target_code());
-            System.out.println("Valor a converter: " + valor + " " + exchangeResponse.base_code());
-            System.out.println("Valor convertido: " + exchangeResponse.conversion_result() + " " + exchangeResponse.target_code());
-            System.out.println("Taxa de conversão: " + exchangeResponse.conversion_rate() + " " + exchangeResponse.target_code());
+            System.out.println("*********          Histórico da moeda         *********");
+            System.out.println("Moeda de base: " + historyResponse.base_code());
+            System.out.println(String.format("Data: %d/%d/%d", historyResponse.day(), historyResponse.month(), historyResponse.year()));
+
+            int count=1;
+            for(Map.Entry<String, Double> convertionRate : historyResponse.conversion_rates().entrySet()){
+                if(count<6){
+                    System.out.print(String.format("[%-3s] [%.2f]  |  ", convertionRate.getKey(), convertionRate.getValue()));
+                }
+                else{
+                    System.out.println(String.format("[%-3s] [%.2f]  |", convertionRate.getKey(), convertionRate.getValue()));
+                    count = 0;
+                }
+                count++;
+            }
+
+            System.out.println("*******************************************************");
         }
         catch(NullPointerException e){
             System.out.println("[ERRO]: Uma ou as duas moedas fornecidas são inválidas, tente novamente.");
