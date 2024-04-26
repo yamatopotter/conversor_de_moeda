@@ -14,7 +14,7 @@ import java.util.Map;
 import java.util.Scanner;
 
 public class Main {
-    static String apiKey = "10a5d1f31240f78d93470fd2";
+    static String apiKey = "sua_chave_api";
     static CurrencyList currencyList = new CurrencyList(apiKey);
     static Log logfile = new Log("log.txt");
     static Historico historicoFile = new Historico("historico.txt");
