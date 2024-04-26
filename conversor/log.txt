@@ -3,3 +3,6 @@
 2024-04-25T00:13:12.417981646 | Erro Cannot invoke "org.oraclenextone.model.Currency.getCode()" because "currency1" is null 
 2024-04-25T00:13:17.340937914 | Moeda base: BRL | Valor base: 120,00 | Moeda conversão: USD | Valor conversão: 23,34 
 2024-04-25T00:13:44.018680961 | Moeda base: BRL | Valor base: 150,00 | Moeda conversão: USD | Valor conversão: 29,18 
+2024-04-25T23:19:56.162764930 | Moeda base: USD | Valor base: 50.00 | Moeda conversão: ARS | Valor conversão: 43237.50 
+2024-04-25T23:20:02.216232971 | Moeda base: USD | Valor base: 20.00 | Moeda conversão: BRL | Valor conversão: 102.98 
+2024-04-25T23:20:12.680432442 | Moeda base: USD | Valor base: 20.00 | Moeda conversão: COP | Valor conversão: 78692.09 

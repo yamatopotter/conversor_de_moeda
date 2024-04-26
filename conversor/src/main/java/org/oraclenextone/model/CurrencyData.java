@@ -19,11 +19,10 @@ public class CurrencyData {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        for(String[] item: supportedCodes){
+        for (String[] item : supportedCodes) {
             sb.append("Supported Codes:\n");
-            for (String[] code : supportedCodes) {
-                sb.append(item[0]).append(": ").append(item[1]).append("\n");
-            }
+
+            sb.append(item[0]).append(": ").append(item[1]).append("\n");
         }
 
         return sb.toString();

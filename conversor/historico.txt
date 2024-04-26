@@ -1,0 +1,3 @@
+2024-04-25T23:19:56.161624774 | Moeda base: USD | Valor base: 50.00 | Moeda conversão: ARS | Valor conversão: 43237.50 
+2024-04-25T23:20:02.216054355 | Moeda base: USD | Valor base: 20.00 | Moeda conversão: BRL | Valor conversão: 102.98 
+2024-04-25T23:20:12.680199233 | Moeda base: USD | Valor base: 20.00 | Moeda conversão: COP | Valor conversão: 78692.09 

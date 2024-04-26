@@ -17,14 +17,15 @@ public class Main {
     static String apiKey = "10a5d1f31240f78d93470fd2";
     static CurrencyList currencyList = new CurrencyList(apiKey);
     static Log logfile = new Log("log.txt");
+    static Historico historicoFile = new Historico("historico.txt");
 
     public static void main(String[] args) {
         Scanner leitura = new Scanner(System.in);
-        int opcao = 0;
-        double valor = 0.0;
-        String verMoedas = "";
-        String moeda1 = "";
-        Boolean loopMenu = true;
+        int opcao;
+        double valor;
+        String verMoedas;
+        String moeda1;
+        boolean loopMenu = true;
 
         while (loopMenu) {
             showMenu();
@@ -96,6 +97,12 @@ public class Main {
 //
 //                    showCurrencyHistory(moeda1, dia, mes, ano);
                 case 9:
+                    System.out.println("*******************************************************");
+                    System.out.println("*********       Histórico de conversões       *********");
+                    historicoFile.outputFile();
+                    System.out.println("*******************************************************");
+                    break;
+                case 10:
                     loopMenu = false;
                     logfile.closeFile();
                     break;
@@ -133,6 +140,7 @@ public class Main {
             System.out.println("Valor a converter: " + valor + " " + exchangeResponse.base_code());
             System.out.println("Valor convertido: " + exchangeResponse.conversion_result() + " " + exchangeResponse.target_code());
             System.out.println("Taxa de conversão: " + exchangeResponse.conversion_rate() + " " + exchangeResponse.target_code());
+            historicoFile.addHistorico(LocalDateTime.now(), exchangeResponse.base_code(), exchangeResponse.target_code(), valor, exchangeResponse.conversion_result());
             logfile.addLog(LocalDateTime.now(), exchangeResponse.base_code(), exchangeResponse.target_code(), valor, exchangeResponse.conversion_result());
         }
         catch (Exception e) {
@@ -168,15 +176,15 @@ public class Main {
             System.out.println("*******************************************************");
             System.out.println("*********          Histórico da moeda         *********");
             System.out.println("Moeda de base: " + historyResponse.base_code());
-            System.out.println(String.format("Data: %d/%d/%d", historyResponse.day(), historyResponse.month(), historyResponse.year()));
+            System.out.printf("Data: %d/%d/%d%n", historyResponse.day(), historyResponse.month(), historyResponse.year());
 
             int count=1;
             for(Map.Entry<String, Double> convertionRate : historyResponse.conversion_rates().entrySet()){
                 if(count<6){
-                    System.out.print(String.format("[%-3s] [%.2f]  |  ", convertionRate.getKey(), convertionRate.getValue()));
+                    System.out.printf("[%-3s] [%.2f]  |  ", convertionRate.getKey(), convertionRate.getValue());
                 }
                 else{
-                    System.out.println(String.format("[%-3s] [%.2f]  |", convertionRate.getKey(), convertionRate.getValue()));
+                    System.out.printf("[%-3s] [%.2f]  |%n", convertionRate.getKey(), convertionRate.getValue());
                     count = 0;
                 }
                 count++;
@@ -195,7 +203,7 @@ public class Main {
     private static void showMenu() {
         System.out.println("*******************************************************");
         System.out.println("*********         Conversor de Moedas         *********");
-        System.out.println("");
+        System.out.println();
         System.out.println("1) Dólar (USD) >> Peso Argentino (ARS)");
         System.out.println("2) Peso Argentino (ARS) >> Dólar (USD)");
         System.out.println("3) Dólar (USD) >> Real Brasileiro (BRL)");
@@ -204,7 +212,8 @@ public class Main {
         System.out.println("6) Peso Colombiano (COP) >> Dólar (USD)");
         System.out.println("7) Converter para outra moeda");
         System.out.println("8) Ver histórico da moeda");
-        System.out.println("9) Sair");
+        System.out.println("9) Ver histórico de conversões");
+        System.out.println("10) Sair");
         System.out.println("*******************************************************");
     }
 }

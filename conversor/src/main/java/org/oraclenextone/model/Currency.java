@@ -1,8 +1,8 @@
 package org.oraclenextone.model;
 
 public class Currency {
-    private String name;
-    private String code;
+    private final String name;
+    private final String code;
 
     public Currency(String name, String code) {
         this.name = name;
